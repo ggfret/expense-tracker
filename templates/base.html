@@ -8,5 +8,20 @@
 <body>
   <h1>Expense Tracker</h1>
   {% block content %}{% endblock %}
+  <script>
+    // Two-click confirm instead of window.confirm(), which some embedded browsers block.
+    document.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-confirm]");
+      if (!button || button.dataset.armed) return;
+      event.preventDefault();
+      const label = button.textContent;
+      button.dataset.armed = "true";
+      button.textContent = "Sure?";
+      setTimeout(() => {
+        delete button.dataset.armed;
+        button.textContent = label;
+      }, 3000);
+    });
+  </script>
 </body>
 </html>

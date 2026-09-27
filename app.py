@@ -32,12 +32,14 @@ def init_db():
 
 @app.route("/")
 def index():
-    count = get_db().execute("SELECT COUNT(*) FROM expenses").fetchone()[0]
+    expenses = get_db().execute(
+        "SELECT id, amount, category, spent_on, note FROM expenses ORDER BY spent_on DESC, id DESC"
+    ).fetchall()
     return render_template(
         "index.html",
         categories=CATEGORIES,
         today=date.today().isoformat(),
-        count=count,
+        expenses=expenses,
     )
 
 
@@ -57,6 +59,14 @@ def add_expense():
         "INSERT INTO expenses (amount, category, spent_on, note) VALUES (?, ?, ?, ?)",
         (amount, category, spent_on, request.form.get("note", "").strip()),
     )
+    db.commit()
+    return redirect(url_for("index"))
+
+
+@app.post("/delete/<int:expense_id>")
+def delete_expense(expense_id):
+    db = get_db()
+    db.execute("DELETE FROM expenses WHERE id = ?", (expense_id,))
     db.commit()
     return redirect(url_for("index"))
 
