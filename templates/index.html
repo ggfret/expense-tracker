@@ -1,71 +1,83 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Add an expense</h2>
-<form method="post" action="{{ url_for('add_expense') }}">
-  <label>Amount
-    <input type="number" name="amount" step="0.01" min="0.01" required>
-  </label>
-  <label>Category
-    <select name="category" required>
-      {% for c in categories %}
-        <option>{{ c }}</option>
-      {% endfor %}
-    </select>
-  </label>
-  <label>Date
-    <input type="date" name="spent_on" value="{{ today }}" required>
-  </label>
-  <label>Note
-    <input type="text" name="note" maxlength="200" placeholder="optional">
-  </label>
-  <button type="submit">Add</button>
-</form>
+<section class="card">
+  <h2>Add an expense</h2>
+  <form class="add-form" method="post" action="{{ url_for('add_expense') }}">
+    <label>Amount
+      <input type="number" name="amount" step="0.01" min="0.01" inputmode="decimal" required>
+    </label>
+    <label>Category
+      <select name="category" required>
+        {% for c in categories %}
+          <option>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Date
+      <input type="date" name="spent_on" value="{{ today }}" required>
+    </label>
+    <label class="wide">Note
+      <input type="text" name="note" maxlength="200" placeholder="optional">
+    </label>
+    <button class="primary" type="submit">Add expense</button>
+  </form>
+</section>
 
-<nav class="month-nav">
-  <a href="{{ url_for('index', month=prev_month) }}" aria-label="Previous month">&#9664;</a>
-  <h2>{{ month_label }}</h2>
-  <a href="{{ url_for('index', month=next_month) }}" aria-label="Next month">&#9654;</a>
-</nav>
+<section class="card">
+  <nav class="month-nav">
+    <a href="{{ url_for('index', month=prev_month) }}" aria-label="Previous month">&#9664;</a>
+    <h2>{{ month_label }}</h2>
+    <a href="{{ url_for('index', month=next_month) }}" aria-label="Next month">&#9654;</a>
+  </nav>
 
-<p class="total">Total spent: <strong>{{ "%.2f"|format(total) }}</strong></p>
+  <p class="total">
+    <span>Total spent</span>
+    <strong>{{ "%.2f"|format(total) }}</strong>
+  </p>
 
-{% if by_category %}
-<div class="chart">
-  {% for row in by_category %}
-  <div class="chart-row">
-    <span class="chart-label">{{ row.category }}</span>
-    <span class="chart-track">
-      <span class="chart-bar" style="width: {{ (row.total / biggest * 100)|round(1) }}%"></span>
-    </span>
-    <span class="chart-value">{{ "%.2f"|format(row.total) }}</span>
-  </div>
-  {% endfor %}
-</div>
-{% endif %}
-
-{% if expenses %}
-<table>
-  <thead>
-    <tr><th>Date</th><th>Category</th><th>Note</th><th>Amount</th><th></th></tr>
-  </thead>
-  <tbody>
-    {% for e in expenses %}
-    <tr>
-      <td>{{ e.spent_on }}</td>
-      <td>{{ e.category }}</td>
-      <td>{{ e.note or "" }}</td>
-      <td>{{ "%.2f"|format(e.amount) }}</td>
-      <td>
-        <form method="post" action="{{ url_for('delete_expense', expense_id=e.id, month=month) }}">
-          <button type="submit" data-confirm>Delete</button>
-        </form>
-      </td>
-    </tr>
+  {% if by_category %}
+  <div class="chart">
+    {% for row in by_category %}
+    <div class="chart-row">
+      <span class="chart-label">{{ row.category }}</span>
+      <span class="chart-track">
+        <span class="chart-bar" style="width: {{ (row.total / biggest * 100)|round(1) }}%"></span>
+      </span>
+      <span class="chart-value">{{ "%.2f"|format(row.total) }}</span>
+    </div>
     {% endfor %}
-  </tbody>
-</table>
-{% else %}
-<p>No expenses in {{ month_label }}.</p>
-{% endif %}
+  </div>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Expenses</h2>
+  {% if expenses %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Category</th><th>Note</th><th class="num">Amount</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for e in expenses %}
+        <tr>
+          <td class="nowrap">{{ e.spent_on }}</td>
+          <td>{{ e.category }}</td>
+          <td class="muted">{{ e.note or "" }}</td>
+          <td class="num">{{ "%.2f"|format(e.amount) }}</td>
+          <td>
+            <form method="post" action="{{ url_for('delete_expense', expense_id=e.id, month=month) }}">
+              <button class="delete" type="submit" data-confirm>Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">No expenses in {{ month_label }}.</p>
+  {% endif %}
+</section>
 {% endblock %}

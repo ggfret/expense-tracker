@@ -7,8 +7,14 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <h1>Expense Tracker</h1>
-  {% block content %}{% endblock %}
+  <header class="site-header">
+    <div class="container">
+      <h1>Expense Tracker</h1>
+    </div>
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
   <script>
     // Two-click confirm instead of window.confirm(), which some embedded browsers block.
     document.addEventListener("click", (event) => {
