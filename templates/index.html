@@ -22,7 +22,28 @@
   <button type="submit">Add</button>
 </form>
 
-<h2>Your expenses</h2>
+<nav class="month-nav">
+  <a href="{{ url_for('index', month=prev_month) }}" aria-label="Previous month">&#9664;</a>
+  <h2>{{ month_label }}</h2>
+  <a href="{{ url_for('index', month=next_month) }}" aria-label="Next month">&#9654;</a>
+</nav>
+
+<p class="total">Total spent: <strong>{{ "%.2f"|format(total) }}</strong></p>
+
+{% if by_category %}
+<div class="chart">
+  {% for row in by_category %}
+  <div class="chart-row">
+    <span class="chart-label">{{ row.category }}</span>
+    <span class="chart-track">
+      <span class="chart-bar" style="width: {{ (row.total / biggest * 100)|round(1) }}%"></span>
+    </span>
+    <span class="chart-value">{{ "%.2f"|format(row.total) }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
 {% if expenses %}
 <table>
   <thead>
@@ -36,7 +57,7 @@
       <td>{{ e.note or "" }}</td>
       <td>{{ "%.2f"|format(e.amount) }}</td>
       <td>
-        <form method="post" action="{{ url_for('delete_expense', expense_id=e.id) }}">
+        <form method="post" action="{{ url_for('delete_expense', expense_id=e.id, month=month) }}">
           <button type="submit" data-confirm>Delete</button>
         </form>
       </td>
@@ -45,6 +66,6 @@
   </tbody>
 </table>
 {% else %}
-<p>No expenses yet. Add your first one above.</p>
+<p>No expenses in {{ month_label }}.</p>
 {% endif %}
 {% endblock %}

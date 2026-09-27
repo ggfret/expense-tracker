@@ -1,0 +1,34 @@
+.month-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.chart {
+  display: grid;
+  gap: 0.4rem;
+  max-width: 480px;
+  margin-bottom: 1.5rem;
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 6rem 1fr 6rem;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chart-track {
+  height: 1rem;
+}
+
+.chart-bar {
+  display: block;
+  height: 100%;
+  background: #4f7cff;
+  border-radius: 3px;
+}
+
+.chart-value {
+  text-align: right;
+}
